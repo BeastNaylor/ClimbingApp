@@ -1,4 +1,5 @@
 ﻿using ClimbingStats.Models;
+using ClimbingStats.Models.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +9,9 @@ namespace ClimbingStats
 {
     public interface IClimbingRouteRepository
     {
-        IEnumerable<Route> GetRoutes();
-        void InsertRoute(Route route);
+        Task<IEnumerable<Route>> GetAllRoutes();
+        Task<IEnumerable<Route>> GetRoutes(Section section);
+        Task InsertRoute(AddRouteDto route);
+        Task ClearRoutes(Section section);
     }
 }

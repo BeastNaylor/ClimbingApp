@@ -1,4 +1,5 @@
 ﻿using ClimbingStats.Models;
+using ClimbingStats.Models.Enums;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -19,10 +20,29 @@ namespace ClimbingStats.Controllers
         }
 
         [HttpGet]
-        public IEnumerable<Route> Get()
+        public async Task<IEnumerable<Route>> GetAllRoutes()
         {
-            _climbingRouteRepository.InsertRoute(new Route() { Colour = "Black", Position = 1, Section = "Cafe" });
-            return _climbingRouteRepository.GetRoutes();
+            var routes = await _climbingRouteRepository.GetAllRoutes();
+            return routes;
+        }
+
+        [HttpGet("{section}")]
+        public async Task<IEnumerable<Route>> GetRoutesForSection(Section section)
+        {
+            return await _climbingRouteRepository.GetRoutes(section);
+        }
+
+
+        [HttpPost("add")]
+        public async Task AddRoute([FromBody]AddRouteDto routeToAdd)
+        {
+            await _climbingRouteRepository.InsertRoute(routeToAdd);
+        }
+
+        [HttpPost("clear/{section}")]
+        public async Task ClearRoutesFromSection(Section section)
+        {
+            await _climbingRouteRepository.ClearRoutes(section);
         }
     }
 }

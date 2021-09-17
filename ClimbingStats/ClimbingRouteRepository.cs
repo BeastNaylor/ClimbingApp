@@ -4,8 +4,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.Data.Sqlite;
+using System.Data.SQLite;
 using Dapper;
+using System.IO;
+using ClimbingStats.Models.Enums;
 
 namespace ClimbingStats
 {
@@ -16,29 +18,51 @@ namespace ClimbingStats
         public ClimbingRouteRepository(IOptions<ClimbingConfig> options)
         {
             _connectionString = options.Value.ClimbingDb;
-            CreateDbIfNotExists();
+            CreateDbIfNotExists().Wait();
         }
 
-        public IEnumerable<Route> GetRoutes()
+        public async Task ClearRoutes(Section section)
         {
-            const string sql = "SELECT * FROM Routes";
-            using (var conn = new SqliteConnection(_connectionString))
+            const string sql = "UPDATE Routes SET IsActive = false WHERE section = @Section";
+            using (var conn = new SQLiteConnection(_connectionString))
             {
                 conn.Open();
-                return conn.Query<Route>(sql);
+                await conn.ExecuteAsync(sql, new { section });
             };
         }
 
-        public void InsertRoute(Route route)
+        public async Task<IEnumerable<Route>> GetRoutes(Section section)
+        {
+            const string sql = "SELECT ID, Colour, Section, Position, DateAdded, IsActive " +
+                "FROM Routes WHERE section = @Section or @Section IS NULL AND IsActive = true";
+            using (var conn = new SQLiteConnection(_connectionString))
+            {
+                conn.Open();
+                return await conn.QueryAsync<Route>(sql, new { section });
+            };
+        }
+
+        public async Task<IEnumerable<Route>> GetAllRoutes()
+        {
+            const string sql = "SELECT ID, Colour, Section, Position, DateAdded, IsActive " +
+                "FROM Routes WHERE IsActive = true";
+            using (var conn = new SQLiteConnection(_connectionString))
+            {
+                conn.Open();
+                return await conn.QueryAsync<Route>(sql);
+            };
+        }
+
+        public async Task InsertRoute(AddRouteDto route)
         {
             const string sql = @"INSERT INTO Routes
                                     (Colour, Section, Position, DateAdded, IsActive)
                                 VALUES
                                     (@Colour, @Section, @Position, @DateAdded, @IsActive)";
-            using (var conn = new SqliteConnection(_connectionString))
+            using (var conn = new SQLiteConnection(_connectionString))
             {
                 conn.Open();
-                conn.Execute(sql,
+                await conn.ExecuteAsync(sql,
                     new
                     {
                         Colour = route.Colour,
@@ -50,19 +74,25 @@ namespace ClimbingStats
             };
         }
 
-        private void CreateDbIfNotExists()
+        private async Task CreateDbIfNotExists()
         {
-            using (var cnn = new SqliteConnection(_connectionString))
+            if (!File.Exists("AppData/climbing.db"))
             {
+                SQLiteConnection.CreateFile("AppData/climbing.db");
+            }
+
+            using (var cnn = new SQLiteConnection(_connectionString))
+            {
+
                 cnn.Open();
-                cnn.Execute(
+                await cnn.ExecuteAsync(
                     @"create table if not exists Routes
                 (
                     ID                                   integer primary key AUTOINCREMENT,
                     Colour                                varchar(100) not null,
                     Section                              varchar(100) not null,
                     Position                             integer not null,
-                    DateAdded                            integer not null,
+                    DateAdded                            text not null,
                     IsActive                             bool not null
                 )");
             }
