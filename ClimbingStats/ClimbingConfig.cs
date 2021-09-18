@@ -9,6 +9,6 @@ namespace ClimbingStats
     {
         public const string Name = "ClimbingConfig";
 
-        public string ClimbingDb { get; set; }        
+        public string ClimbingDbFile { get; set; }        
     }
 }

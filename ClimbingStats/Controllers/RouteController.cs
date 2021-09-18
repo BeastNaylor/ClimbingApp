@@ -5,11 +5,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ClimbingStats.DataLayer;
 
 namespace ClimbingStats.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class RouteController : ControllerBase
     {
         private readonly IClimbingRouteRepository _climbingRouteRepository;
