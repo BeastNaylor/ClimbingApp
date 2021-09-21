@@ -33,6 +33,18 @@ namespace ClimbingStats.Controllers
             return await _climbingRouteRepository.GetRoutes(section);
         }
 
+        [HttpGet("sections")]
+        public IEnumerable<Section> GetAllSections()
+        {
+            return Enum.GetValues<Section>();
+        }
+
+        [HttpGet("colours")]
+        public IEnumerable<Colour> GetAllColours()
+        {
+            return Enum.GetValues<Colour>();
+        }
+
 
         [HttpPost("add")]
         public async Task AddRoute([FromBody]AddRouteDto routeToAdd)
