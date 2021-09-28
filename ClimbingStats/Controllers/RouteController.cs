@@ -27,6 +27,14 @@ namespace ClimbingStats.Controllers
             return routes;
         }
 
+        [HttpGet("summary")]
+        public async Task<Dictionary<Colour, Dictionary<Section, List<Route>>>> GetRouteSummary()
+        {
+            var routes = await _climbingRouteRepository.GetAllRoutes();
+            return routes.GroupBy(p => p.Colour).ToDictionary(x => x.Key, 
+                y => y.GroupBy(p => p.Section).ToDictionary(x => x.Key, z => z.ToList()));
+        }
+
         [HttpGet("{section}")]
         public async Task<IEnumerable<Route>> GetRoutesForSection(Section section)
         {

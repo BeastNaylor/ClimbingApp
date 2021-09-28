@@ -1,10 +1,14 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import StorageCheck from "../lib/StorageCheck";
+import Cafe from "../maps/Cafe";
+import "../maps/Maps.css";
 
 const Routes = () => {
   const [state, setState] = useState({
     routes: [],
     loading: true,
+    routeMap: [],
   });
 
   useEffect(() => {
@@ -16,7 +20,18 @@ const Routes = () => {
     setState({
       routes: routes.data,
       loading: false,
+      routeMap: mapRoutes(routes.data),
     });
+  };
+
+  const mapRoutes = (routes) => {
+    const routeMap = {};
+    for (const route in routes) {
+      const routeId = routes[route].section + "" + routes[route].position;
+      const isCompleted = StorageCheck(routes[route].id) ? " Completed" : "";
+      routeMap[routeId] = routes[route].colour + isCompleted;
+    }
+    return routeMap;
   };
 
   const renderRoutesTable = (routes) => {
@@ -32,15 +47,18 @@ const Routes = () => {
           </tr>
         </thead>
         <tbody>
-          {routes.map((route) => (
-            <tr key={route.id}>
-              <td>{route.id}</td>
-              <td>{route.section}</td>
-              <td>{route.position}</td>
-              <td>{route.colour}</td>
-              <td></td>
-            </tr>
-          ))}
+          {routes.map((route) => {
+            const climbed = StorageCheck(route.id) ? "Yes" : "No";
+            return (
+              <tr key={route.id}>
+                <td>{route.id}</td>
+                <td>{route.section}</td>
+                <td>{route.position}</td>
+                <td>{route.colour}</td>
+                <td>{climbed}</td>
+              </tr>
+            );
+          })}
         </tbody>
       </table>
     );
@@ -58,6 +76,7 @@ const Routes = () => {
     <div>
       <h1 id="tabelLabel">Routes</h1>
       {contents}
+      <Cafe routes={state.routeMap} />
     </div>
   );
 };

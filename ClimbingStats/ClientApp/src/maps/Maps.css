@@ -1,0 +1,66 @@
+.floor {
+  fill: #6284dc;
+  fill-opacity: 1;
+}
+
+.wall {
+  fill: #bebebe;
+  fill-opacity: 1;
+}
+
+g#routes ellipse {
+  opacity: 0;
+  stroke: #1f0e0e;
+  stroke-width: 0.353843;
+  stroke-opacity: 1;
+  fill: #ffffff00;
+}
+
+g#routes ellipse.Tiger {
+  fill: orange;
+  opacity: 1;
+}
+
+g#routes ellipse.Salmon {
+  fill: #c35f7a;
+  opacity: 1;
+}
+
+g#routes ellipse.Blue {
+  fill: blue;
+  opacity: 1;
+}
+
+g#routes ellipse.Yellow {
+  fill: yellow;
+  opacity: 1;
+}
+
+g#routes ellipse.Hendrix {
+  fill: #e506d2;
+  opacity: 1;
+}
+
+g#routes ellipse.Purple {
+  fill: #7d37b0;
+  opacity: 1;
+}
+
+g#routes ellipse.Red {
+  fill: red;
+  opacity: 1;
+}
+
+g#routes ellipse.White {
+  fill: white;
+  opacity: 1;
+}
+
+g#routes ellipse.Green {
+  fill: #0e7d0f;
+  opacity: 1;
+}
+
+g#routes ellipse.Completed {
+  opacity: 0.5;
+}
